@@ -69,12 +69,33 @@
         .grid-container { overflow-x: auto; margin: 1rem 0; -webkit-overflow-scrolling: touch; }
 
         /* Grid: keep columns flexible but avoid huge overflow */
-        .grid { display: inline-grid; grid-template-columns: 40px repeat(10, minmax(28px, 1fr)); grid-template-rows: 40px repeat(10, minmax(28px, 1fr)); gap: 2px; background: var(--color-border); border: 2px solid var(--color-border); width: 100%; max-width: 100%; }
+        .grid {
+            display: inline-grid;
+            grid-template-columns: 40px repeat(10, 36px);
+            grid-template-rows: 40px repeat(10, 36px);
+            gap: 2px;
+            background: var(--color-border);
+            border: 2px solid var(--color-border);
+            width: auto;
+            max-width: none;
+        }
 
         .grid-cell { background: var(--color-bg-secondary); padding: .5rem; min-height: 44px; display:flex; align-items:center; justify-content:center; font-size: .9rem; text-align:center; }
         .grid-header { background: var(--color-primary); color: white; font-weight:600; }
         .grid-number { background: rgba(33,128,141,0.08); font-weight:600; color:var(--color-primary); }
-        .grid-square { cursor:pointer; transition: all .15s; display:flex; flex-direction:column; font-size:.8rem; line-height:1.2; }
+        .grid-square {
+            cursor: pointer;
+            transition: all .15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 0.8rem;
+            line-height: 1;
+            text-align: center;
+            overflow: hidden;
+            white-space: nowrap;
+        }
 
         .grid-square.claimed { background: rgba(33,128,141,0.12); cursor:default; }
         .grid-square.winner { background: var(--color-winner); color:#000; font-weight:700; animation: pulse 2s infinite; }
@@ -418,7 +439,10 @@
                     <label for="claimName">Your Name *</label>
                     <input type="text" id="claimName" required placeholder="John Smith">
                 </div>
-
+                <div class="input-group">
+                    <label for="claimInitials">Initials (max 3) *</label>
+                    <input type="text" id="claimInitials" required maxlength="3" placeholder="JS">
+                </div>
                 <div class="input-group">
                     <label for="claimPhone">Phone Number *</label>
                     <input type="tel" id="claimPhone" required placeholder="(555) 123-4567" pattern="\([0-9]{3}\) [0-9]{3}-[0-9]{4}" oninput="formatPhoneNumber(this)">
@@ -1148,15 +1172,22 @@ async function accessManagerGrid() {
             
             const name = document.getElementById('claimName').value.trim();
             const phone = document.getElementById('claimPhone').value.trim();
+            const initials = document.getElementById('claimInitials').value.trim().toUpperCase();
+            
+            if (!initials || initials.length === 0) {
+                alert('Please enter your initials.');
+                return;
+            }
             
             const userSquares = currentGrid.squares.filter(s => s.owner && s.owner.phone === phone);
+
             if (userSquares.length >= 8) {
                 alert('You have already claimed the maximum of 8 squares.');
                 closeModal('claimSquareModal');
                 return;
             }
             
-            currentGrid.squares[selectedSquare].owner = { name, phone };
+            currentGrid.squares[selectedSquare].owner = { name, phone, initials };
             
             const gridIndex = grids.findIndex(g => g.id === currentGrid.id);
             grids[gridIndex] = currentGrid;
