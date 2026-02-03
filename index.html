@@ -255,6 +255,19 @@
         text-align: center;
     }
 
+    /* Ensure labels remain visible on narrow screens */
+    .grid-and-vertical-label { align-items: flex-start; }
+    .team-vertical-label {
+        min-width: 28px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.15rem;
+        white-space: nowrap;
+    }
+    .grid-container { flex: 1 1 auto; }
+
     </style>
 </head>
 <body>
